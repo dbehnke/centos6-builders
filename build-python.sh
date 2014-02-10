@@ -13,6 +13,7 @@ GCC_VERSION=4.8.2
 GCC_PREFIX=/opt/gcc-${GCC_VERSION}
 
 export CC=${GCC_PREFIX}/bin/gcc
+export CXX=${GCC_PREFIX}/bin/g++
 
 # Make sure custom gcc was built
 if [ ! -f ${CC} ]; then
