@@ -24,19 +24,47 @@ fi
 #Host Filesystem where downloads will be stored
 HOSTDIR=/vagrant
 
-PYTHON_PREFIX=/opt/python
+OPENSSL_VERSION=1.0.1f
+OPENSSL_FILE=openssl-${OPENSSL_VERSION}.tar.gz
+OPENSSL_URL=https://www.openssl.org/source/${OPENSSL_FILE}
 
-#Common Install Path - will also be used for prefix for the makefiles
-IPATH=${PYTHON_PREFIX}
-#clear out and recreate install path
-rm -r -f $IPATH
+ZLIB_VERSION=1.2.8
+ZLIB_FILE=zlib-${ZLIB_VERSION}.tar.gz
+ZLIB_URL=http://zlib.net/${ZLIB_FILE}
 
-#Directory to build the source
-TEMPDIR=/tmp/build-python
+READLINE_VERSION=6.2
+READLINE_FILE=readline-${READLINE_VERSION}.tar.gz
+READLINE_URL=http://ftp.gnu.org/gnu/readline/${READLINE_FILE}
 
-#clear out and recreate temp directory
-rm -r -f $TEMPDIR
-mkdir $TEMPDIR
+BZIP_VERSION=1.0.6
+BZIP_FILE=bzip2-${BZIP_VERSION}.tar.gz
+BZIP_URL=http://www.bzip.org/${BZIP_VERSION}/${BZIP_FILE}
+
+XZ_VERSION=5.0.5
+XZ_FILE=xz-${XZ_VERSION}.tar.gz
+XZ_URL=http://tukaani.org/xz/${XZ_FILE}
+
+SQLITE_VERSION=3080300
+SQLITE_FILE=sqlite-autoconf-${SQLITE_VERSION}.tar.gz
+SQLITE_URL=https://sqlite.org/2014/${SQLITE_FILE}
+
+PYTHON3_VERSION=3.3.3
+PYTHON3_FILE=Python-${PYTHON3_VERSION}.tgz
+PYTHON3_URL=http://python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz
+PYTHON3_PREFIX=/opt/python-${PYTHON3_VERSION}
+
+PYTHON2_VERSION=2.7.6
+PYTHON2_FILE=Python-${PYTHON2_VERSION}.tgz
+PYTHON2_URL=http://python.org/ftp/python/${PYTHON2_VERSION}/${PYTHON2_FILE}
+PYTHON2_PREFIX=/opt/python-${PYTHON2_VERSION}
+
+SETUPTOOLS_VERSION=2.2
+SETUPTOOLS_FILE=setuptools-${SETUPTOOLS_VERSION}.tar.gz
+SETUPTOOLS_URL=https://pypi.python.org/packages/source/s/setuptools/${SETUPTOOLS_FILE}
+
+#Directories to build the source
+PYTHON2_TEMPDIR=/tmp/build-python-{$PYTHON2_VERSION}
+PYTHON3_TEMPDIR=/tmp/build-python3-{$PYTHON3_VERSION}
 
 #If not using the built gcc 4.8.2
 #Advice to use gcc44 to get rid of _decimal library not building
@@ -45,189 +73,250 @@ mkdir $TEMPDIR
 #export CC=/usr/bin/gcc44
 
 #Set LD_LIBRARY_PATH to local lib directory
-export LD_LIBRARY_PATH=$IPATH/lib:${GCC_PREFIX}/lib
+export LD_LIBRARY_PATH=${GCC_PREFIX}/lib
 
-#Download and Build OpenSSL
-cd $HOSTDIR
-OPENSSL_VERSION=1.0.1f
-OPENSSL_FILE=openssl-${OPENSSL_VERSION}.tar.gz
-OPENSSL_URL=https://www.openssl.org/source/${OPENSSL_FILE}
-if [ ! -f ${OPENSSL_FILE} ]; then
-    wget ${OPENSSL_URL}
+cleartemp() {
+  rm -r -f ${PYTHON2_TEMPDIR}
+  rm -r -f ${PYTHON3_TEMPDIR}
+}
+
+maketemp() {
+  mkdir ${PYTHON2_TEMPDIR}
+  mkdir ${PYTHON3_TEMPDIR}
+}
+
+download() {
+  #parameters: $1 = url to download, $2 = filename
+  cd ${HOSTDIR}
+  URL=$1
+  FILENAME=$2
+  echo "Downloading ${FILENAME} from ${URL}..."
+  if [ ! -f ${FILENAME} ]; then
+    wget ${URL} --no-check-certificate
     if [ $? -ne 0 ]; then
-      echo "failed download"
+      echo "failed download of ${URL}"
       exit 1
     fi
-fi
-cd $TEMPDIR
-tar xvfz ${HOSTDIR}/${OPENSSL_FILE}
-cd openssl-${OPENSSL_VERSION}/
-./config --prefix=$IPATH --shared
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
+  fi
+}
 
-#Download and Build zlib
-cd $HOSTDIR
-ZLIB_VERSION=1.2.8
-ZLIB_FILE=zlib-${ZLIB_VERSION}.tar.gz
-ZLIB_URL=http://zlib.net/${ZLIB_FILE}
-if [ ! -f ${ZLIB_FILE} ]; then
-    wget ${ZLIB_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${ZLIB_FILE} 
-cd zlib-${ZLIB_VERSION}/
-./configure --prefix=$IPATH
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
+extract() {
+  # $1 = extract params (i.e. xvfz), $2 = filename
+  echo "Extracting ${2} using tar ${1}..."
+  tar $1 $2
+  if [ $? -ne 0 ]; then
+    echo "failed extraction of ${2}"
+    exit 1
+  fi
+}
 
-#Download and Build readline
-cd $HOSTDIR
-READLINE_VERSION=6.2
-READLINE_FILE=readline-${READLINE_VERSION}.tar.gz
-READLINE_URL=http://ftp.gnu.org/gnu/readline/${READLINE_FILE}
-if [ ! -f ${READLINE_FILE} ]; then
-    wget ${READLINE_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${READLINE_FILE} 
-cd readline-${READLINE_VERSION}/
-./configure --prefix=$IPATH
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
+extract_gzip() {
+  # $1 = filename
+  extract xfz $1
+}
 
-#Download and Build bzip2
-cd $HOSTDIR
-BZIP_VERSION=1.0.6
-BZIP_FILE=bzip2-${BZIP_VERSION}.tar.gz
-BZIP_URL=http://www.bzip.org/${BZIP_VERSION}/${BZIP_FILE}
-if [ ! -f ${BZIP_FILE} ]; then
-    wget ${BZIP_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${BZIP_FILE} 
-cd bzip2-${BZIP_VERSION}/
-make -f Makefile-libbz2_so
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install PREFIX=$IPATH
+extract_bzip() {
+  # $1 = filename
+  extract xfj $1
+}
 
-#Download and Build xz
-cd $HOSTDIR
-XZ_VERSION=5.0.5
-XZ_FILE=xz-${XZ_VERSION}.tar.gz
-XZ_URL=http://tukaani.org/xz/${XZ_FILE}
-if [ ! -f ${XZ_FILE} ]; then
-    wget ${XZ_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${XZ_FILE} 
-cd xz-${XZ_VERSION}/
-./configure --prefix=$IPATH
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
+build_dependencies() {
+  #$1 = temp directory $2 = install path
+  TEMPDIR=$1
+  IPATH=$2
 
-#Download and Build Sqlite
-cd $HOSTDIR
-SQLITE_VERSION=3080300
-SQLITE_FILE=sqlite-autoconf-${SQLITE_VERSION}.tar.gz
-SQLITE_URL=https://sqlite.org/2014/${SQLITE_FILE}
-if [ ! -f ${SQLITE_FILE} ]; then
-    wget ${SQLITE_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${SQLITE_FILE}
-cd sqlite-autoconf-${SQLITE_VERSION}/
-./configure --prefix=$IPATH
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
+  SAVED_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${IPATH}/lib
 
-#Download and Build Python 3
+  cd ${TEMPDIR}
+  extract_gzip ${HOSTDIR}/${OPENSSL_FILE}
+  extract_gzip ${HOSTDIR}/${ZLIB_FILE} 
+  extract_gzip ${HOSTDIR}/${READLINE_FILE}
+  extract_gzip ${HOSTDIR}/${BZIP_FILE}
+  extract_gzip ${HOSTDIR}/${XZ_FILE}
+  extract_gzip ${HOSTDIR}/${SQLITE_FILE}
+  extract_gzip ${HOSTDIR}/${SETUPTOOLS_FILE}
+
+  #Build OpenSSL
+  cd ${TEMPDIR}
+  cd openssl-${OPENSSL_VERSION}/
+  ./config --prefix=$IPATH --shared
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make"
+    exit 1
+  fi
+  make install
+
+  #Build zlib
+
+  cd ${TEMPDIR}
+  cd zlib-${ZLIB_VERSION}/
+  ./configure --prefix=$IPATH
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make"
+    exit 1
+  fi
+  make install
+
+  #Download and Build readline
+  cd ${TEMPDIR} 
+  cd readline-${READLINE_VERSION}/
+  ./configure --prefix=$IPATH
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make"
+    exit 1
+  fi
+  make install
+
+  #Download and Build bzip2
+  cd ${TEMPDIR}
+  cd bzip2-${BZIP_VERSION}/
+  make -f Makefile-libbz2_so
+  if [ $? -ne 0 ]; then
+    echo "failed make"
+    exit 1
+  fi
+  make install PREFIX=$IPATH
+
+  #Download and Build xz
+  cd ${TEMPDIR}
+  cd xz-${XZ_VERSION}/
+  ./configure --prefix=$IPATH
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make"
+    exit 1
+  fi
+  make install
+
+  #Download and Build Sqlite
+  cd ${TEMPDIR}
+  cd sqlite-autoconf-${SQLITE_VERSION}/
+  ./configure --prefix=$IPATH
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make"
+    exit 1
+  fi
+  make install
+
+  #restore LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=${SAVED_LD_LIBRARY_PATH}
+}
+
+install_setuptools() {
+  #$1 = tempdir, $2=path where python is installed
+  #assumes that setuptools was extracted in tempdir
+  TEMPDIR=$1
+  IPATH=$2
+
+  SAVED_PATH=${PATH}
+  export PATH=${IPATH}/bin:${PATH} 
+  #install setuptools, pip, virtualenv
+  cd ${TEMPDIR}
+  cd setuptools-${SETUPTOOLS_VERSION}
+  python setup.py build
+  python setup.py install
+  easy_install pip
+  pip install virtualenv
+  export PATH=${SAVED_PATH}
+}
+
+build_python2() {
+  #$1 = tempdir, $2=install prefix
+  TEMPDIR=$1
+  IPATH=$2
+
+  SAVED_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${IPATH}/lib
+
+  cd ${TEMPDIR}
+  extract_gzip ${HOSTDIR}/${PYTHON2_FILE}
+  cd Python-${PYTHON2_VERSION}
+  
+  ./configure --enable-shared --prefix=${IPATH}
+  
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make for build_python2"
+    exit 1
+  fi
+  
+  make install
+  if [ $? -ne 0 ]; then
+    echo "make install failed for build_python2"
+    exit 1
+  fi
+
+
+  install_setuptools ${TEMPDIR} ${IPATH}
+
+  #restore LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=${SAVED_LD_LIBRARY_PATH}
+}
+
+build_python3() {
+  #$1 = tempdir, $2=install prefix
+  TEMPDIR=$1
+  IPATH=$2
+  SAVED_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${IPATH}/lib
+  
+  cd ${TEMPDIR}
+  extract_gzip ${HOSTDIR}/${PYTHON3_FILE}
+  cd Python-${PYTHON3_VERSION}
+  
+  ./configure --enable-shared --prefix=${IPATH}
+  
+  make
+  if [ $? -ne 0 ]; then
+    echo "failed make for build_python3"
+    exit 1
+  fi
+  
+  make install
+  if [ $? -ne 0 ]; then
+    echo "make install failed for build_python3"
+    exit 1
+  fi
+  
+  #symbolic link python3 to python
+  cd ${IPATH}/bin
+  ln -s python3 python
+
+  #install setuptools
+  install_setuptools ${TEMPDIR} ${IPATH}
+  
+  #restore LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=${SAVED_LD_LIBRARY_PATH}
+}
+
+cleartemp
+maketemp
+
 cd ${HOSTDIR}
-PYTHON3_VERSION=3.3.3
-PYTHON3_FILE=Python-${PYTHON3_VERSION}.tgz
-PYTHON3_URL=http://python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz
-if [ ! -f ${PYTHON3_FILE} ]; then
-    wget ${PYTHON3_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${PYTHON3_FILE}
-cd Python-${PYTHON3_VERSION}
-./configure --enable-shared --prefix=${IPATH}
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
 
-#Download and Build Python 2
-cd ${HOSTDIR}
-PYTHON2_VERSION=2.7.6
-PYTHON2_FILE=Python-${PYTHON2_VERSION}.tgz
-PYTHON2_URL=http://python.org/ftp/python/${PYTHON2_VERSION}/${PYTHON2_FILE}
-if [ ! -f ${PYTHON2_FILE} ]; then
-    wget ${PYTHON2_URL}
-    if [ $? -ne 0 ]; then
-      echo "failed download"
-      exit 1
-    fi
-fi
-cd ${TEMPDIR}
-tar xvfz ${HOSTDIR}/${PYTHON2_FILE}
-cd Python-${PYTHON2_VERSION}
-./configure --enable-shared --prefix=${IPATH}
-make
-if [ $? -ne 0 ]; then
-  echo "failed make"
-  exit 1
-fi
-make install
+download ${OPENSSL_URL} ${OPENSSL_FILE}
+download ${ZLIB_URL} ${ZLIB_FILE}
+download ${READLINE_URL} ${READLINE_FILE}
+download ${BZIP_URL} ${BZIP_FILE}
+download ${SQLITE_URL} ${SQLITE_FILE}
+download ${PYTHON3_URL} ${PYTHON3_FILE}
+download ${PYTHON2_URL} ${PYTHON2_FILE}
+download ${SETUPTOOLS_URL} ${SETUPTOOLS_FILE}
 
-cp ${HOSTDIR}/activate-python.sh /opt
+#build dependencies for each python
+build_dependencies ${PYTHON2_TEMPDIR} ${PYTHON2_PREFIX}
+build_dependencies ${PYTHON3_TEMPDIR} ${PYTHON3_PREFIX}
+
+#build python2
+build_python2 ${PYTHON2_TEMPDIR} ${PYTHON2_PREFIX}
+
+#build python3
+build_python3 ${PYTHON3_TEMPDIR} ${PYTHON3_PREFIX}
+
+cp ${HOSTDIR}/activate-python2.sh /opt/activate-python-${PYTHON2_VERSION}.sh
+cp ${HOSTDIR}/activate-python3.sh /opt/activate-python-${PYTHON3_VERSION}.sh
