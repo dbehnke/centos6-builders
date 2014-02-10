@@ -21,5 +21,22 @@ Build Instructions
 3.  Build Python
 
         /vagrant/build_python.sh
+        
+Activate Environment
+====================
+
+    source /opt/activate_python.sh
+    
+    [vagrant@localhost ~]$ python3
+    Python 3.3.3 (default, Feb 10 2014, 02:11:48)
+    [GCC 4.8.2] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+    
+    [vagrant@localhost ~]$ python2
+    Python 2.7.6 (default, Feb 10 2014, 02:15:21)
+    [GCC 4.8.2] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
 
 
