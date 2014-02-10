@@ -25,13 +25,19 @@ Build Instructions
 Activate Environment
 ====================
 
+Activate
+
     source /opt/activate_python.sh
     
+Test Python 3
+
     [vagrant@localhost ~]$ python3
     Python 3.3.3 (default, Feb 10 2014, 02:11:48)
     [GCC 4.8.2] on linux
     Type "help", "copyright", "credits" or "license" for more information.
     >>>
+
+Test Python 2
     
     [vagrant@localhost ~]$ python2
     Python 2.7.6 (default, Feb 10 2014, 02:15:21)
