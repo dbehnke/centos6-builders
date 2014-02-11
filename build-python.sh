@@ -48,7 +48,7 @@ SQLITE_VERSION=3080300
 SQLITE_FILE=sqlite-autoconf-${SQLITE_VERSION}.tar.gz
 SQLITE_URL=https://sqlite.org/2014/${SQLITE_FILE}
 
-PYTHON3_VERSION=3.3.3
+PYTHON3_VERSION=3.3.4
 PYTHON3_FILE=Python-${PYTHON3_VERSION}.tgz
 PYTHON3_URL=http://python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz
 PYTHON3_PREFIX=/opt/python-${PYTHON3_VERSION}
@@ -63,8 +63,8 @@ SETUPTOOLS_FILE=setuptools-${SETUPTOOLS_VERSION}.tar.gz
 SETUPTOOLS_URL=https://pypi.python.org/packages/source/s/setuptools/${SETUPTOOLS_FILE}
 
 #Directories to build the source
-PYTHON2_TEMPDIR=/tmp/build-python-{$PYTHON2_VERSION}
-PYTHON3_TEMPDIR=/tmp/build-python3-{$PYTHON3_VERSION}
+PYTHON2_TEMPDIR=/tmp/build-python-${PYTHON2_VERSION}
+PYTHON3_TEMPDIR=/tmp/build-python3-${PYTHON3_VERSION}
 
 #If not using the built gcc 4.8.2
 #Advice to use gcc44 to get rid of _decimal library not building
@@ -320,3 +320,4 @@ build_python3 ${PYTHON3_TEMPDIR} ${PYTHON3_PREFIX}
 
 cp ${HOSTDIR}/activate-python2.sh /opt/activate-python-${PYTHON2_VERSION}.sh
 cp ${HOSTDIR}/activate-python3.sh /opt/activate-python-${PYTHON3_VERSION}.sh
+chmod +x /opt/activate*.sh
