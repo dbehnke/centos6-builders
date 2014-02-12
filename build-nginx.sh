@@ -203,6 +203,7 @@ cd ${TEMPDIR}
 tar xvfz ${HOSTDIR}/${NGINX_FILE} 
 cd nginx-${NGINX_VERSION}/
 ./configure --with-pcre=../pcre-${PCRE_VERSION} \
+    --with-http_ssl_module \
     --with-openssl=../openssl-${OPENSSL_VERSION} \
     --with-zlib=../zlib-${ZLIB_VERSION} \
     --prefix=${IPATH}
