@@ -9,58 +9,14 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-GCC_VERSION=4.8.2
-GCC_PREFIX=/opt/gcc-${GCC_VERSION}
-
-export CC=${GCC_PREFIX}/bin/gcc
-export CXX=${GCC_PREFIX}/bin/g++
+source `dirname $0`/global-config.sh
+setcc
 
 # Make sure custom gcc was built
 if [ ! -f ${CC} ]; then
-  echo "gcc 4.8.2 needs to be built/installed"
+  echo "gcc ${GCC_VERSION} needs to be built/installed"
   exit 1
 fi
-
-#Host Filesystem where downloads will be stored
-HOSTDIR=/vagrant
-
-OPENSSL_VERSION=1.0.1f
-OPENSSL_FILE=openssl-${OPENSSL_VERSION}.tar.gz
-OPENSSL_URL=https://www.openssl.org/source/${OPENSSL_FILE}
-
-ZLIB_VERSION=1.2.8
-ZLIB_FILE=zlib-${ZLIB_VERSION}.tar.gz
-ZLIB_URL=http://zlib.net/${ZLIB_FILE}
-
-READLINE_VERSION=6.2
-READLINE_FILE=readline-${READLINE_VERSION}.tar.gz
-READLINE_URL=http://ftp.gnu.org/gnu/readline/${READLINE_FILE}
-
-BZIP_VERSION=1.0.6
-BZIP_FILE=bzip2-${BZIP_VERSION}.tar.gz
-BZIP_URL=http://www.bzip.org/${BZIP_VERSION}/${BZIP_FILE}
-
-XZ_VERSION=5.0.5
-XZ_FILE=xz-${XZ_VERSION}.tar.gz
-XZ_URL=http://tukaani.org/xz/${XZ_FILE}
-
-SQLITE_VERSION=3080300
-SQLITE_FILE=sqlite-autoconf-${SQLITE_VERSION}.tar.gz
-SQLITE_URL=https://sqlite.org/2014/${SQLITE_FILE}
-
-PYTHON3_VERSION=3.3.4
-PYTHON3_FILE=Python-${PYTHON3_VERSION}.tgz
-PYTHON3_URL=http://python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz
-PYTHON3_PREFIX=/opt/python-${PYTHON3_VERSION}
-
-PYTHON2_VERSION=2.7.6
-PYTHON2_FILE=Python-${PYTHON2_VERSION}.tgz
-PYTHON2_URL=http://python.org/ftp/python/${PYTHON2_VERSION}/${PYTHON2_FILE}
-PYTHON2_PREFIX=/opt/python-${PYTHON2_VERSION}
-
-SETUPTOOLS_VERSION=2.2
-SETUPTOOLS_FILE=setuptools-${SETUPTOOLS_VERSION}.tar.gz
-SETUPTOOLS_URL=https://pypi.python.org/packages/source/s/setuptools/${SETUPTOOLS_FILE}
 
 #Directories to build the source
 PYTHON2_TEMPDIR=/tmp/build-python-${PYTHON2_VERSION}
@@ -83,41 +39,6 @@ cleartemp() {
 maketemp() {
   mkdir ${PYTHON2_TEMPDIR}
   mkdir ${PYTHON3_TEMPDIR}
-}
-
-download() {
-  #parameters: $1 = url to download, $2 = filename
-  cd ${HOSTDIR}
-  URL=$1
-  FILENAME=$2
-  echo "Downloading ${FILENAME} from ${URL}..."
-  if [ ! -f ${FILENAME} ]; then
-    wget ${URL} --no-check-certificate
-    if [ $? -ne 0 ]; then
-      echo "failed download of ${URL}"
-      exit 1
-    fi
-  fi
-}
-
-extract() {
-  # $1 = extract params (i.e. xvfz), $2 = filename
-  echo "Extracting ${2} using tar ${1}..."
-  tar $1 $2
-  if [ $? -ne 0 ]; then
-    echo "failed extraction of ${2}"
-    exit 1
-  fi
-}
-
-extract_gzip() {
-  # $1 = filename
-  extract xfz $1
-}
-
-extract_bzip() {
-  # $1 = filename
-  extract xfj $1
 }
 
 build_dependencies() {
@@ -303,6 +224,7 @@ download ${OPENSSL_URL} ${OPENSSL_FILE}
 download ${ZLIB_URL} ${ZLIB_FILE}
 download ${READLINE_URL} ${READLINE_FILE}
 download ${BZIP_URL} ${BZIP_FILE}
+download ${XZ_URL} ${XZ_FILE}
 download ${SQLITE_URL} ${SQLITE_FILE}
 download ${PYTHON3_URL} ${PYTHON3_FILE}
 download ${PYTHON2_URL} ${PYTHON2_FILE}
@@ -321,3 +243,8 @@ build_python3 ${PYTHON3_TEMPDIR} ${PYTHON3_PREFIX}
 cp ${HOSTDIR}/activate-python2.sh /opt/activate-python-${PYTHON2_VERSION}.sh
 cp ${HOSTDIR}/activate-python3.sh /opt/activate-python-${PYTHON3_VERSION}.sh
 chmod +x /opt/activate*.sh
+
+#package python2
+package python-${PYTHON2_VERSION}
+#package python3
+package python-${PYTHON3_VERSION}
