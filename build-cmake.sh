@@ -29,7 +29,7 @@ extract_gzip ${HOSTDIR}/${CMAKE_FILE}
 cd cmake-${CMAKE_VERSION}
 
 export LD_LIBRARY_PATH=${GCC_PREFIX}/lib64
-./configure --prefix=${INSTPREFIX}/cmake-${CMAKE_VERSION}
+./configure --prefix=${CMAKE_PREFIX}
 gmake
 make
 make install
