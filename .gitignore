@@ -1,0 +1,5 @@
+*.gz
+*.bz
+*.tgz
+*.bz2
+.vagrant
