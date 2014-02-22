@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Builds MySQL for CentOS 5x
+#Builds cmake for CentOS 5x
 
 #make sure we running as root
 # Make sure only root can run our script
@@ -9,36 +9,28 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-GCC_VERSION=4.8.2
-GCC_PREFIX=/opt/gcc-${GCC_VERSION}
-
-export CC=${GCC_PREFIX}/bin/gcc
-export CXX=${GCC_PREFIX}/bin/g++
+source `dirname $0`/global-config.sh
 
 # Make sure custom gcc was built
 if [ ! -f ${CC} ]; then
-  echo "gcc 4.8.2 needs to be built/installed"
+  echo "gcc ${GCC_VERSION} needs to be built/installed"
   exit 1
 fi
 
-HOSTDIR=/vagrant
-INSTPREFIX=/opt
-TEMPDIR=/tmp
+setcc
 
-CMAKE_VERSION=2.8.12.2
-CMAKE_FILE=cmake-2.8.12.2.tar.gz
-CMAKE_URL=http://www.cmake.org/files/v2.8/${CMAKE_FILE}
-CMAKE_INSTDIR=${INSTPREFIX}/cmake
+cd ${HOSTDIR}
+download ${CMAKE_URL} ${CMAKE_FILE}
 
-cd $HOSTDIR
-wget ${CMAKE_URL}
-cd /tmp
+cd ${TEMPDIR}
 rm -r -f cmake*
-sudo rm -r -f /opt/cmake*
-tar xvfz ${HOSTDIR}/${CMAKE_FILE}
+rm -r -f /opt/cmake*
+extract_gzip ${HOSTDIR}/${CMAKE_FILE}
 cd cmake-${CMAKE_VERSION}
+
 export LD_LIBRARY_PATH=${GCC_PREFIX}/lib64
-./configure --prefix=/opt/cmake
+./configure --prefix=${INSTPREFIX}/cmake-${CMAKE_VERSION}
 gmake
 make
-sudo LD_LIBRARY_PATH=${LD_LIBRARY_PATH} make install
+make install
+package cmake-${CMAKE_VERSION}
