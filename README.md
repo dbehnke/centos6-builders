@@ -1,29 +1,42 @@
-centos5-gcc-python
-==================
+centos5-builders
+================
 
-Build a more modern gcc and python on centos5
+Build a more modern gcc, cmake, python, nginx on centos5
 
-Currently builds GCC 4.8.2, Python 2.7.6 and Python 3.3.3 and installs them in /opt
+Why? CentOS uses an older glibc (2.5) and building on this platform allows to make portable binaries that are forward compatible.  This is especially valuable, if you are like me and stuck using enterprise linux, but would like to use some newer software.
 
 Tested with CentOS 5.10 - but should work on Oracle Linux 5, Red Hat Enterprise 5 variants.
 
 I'm assuming you are using Vagrant
 
-Build Instructions
-==================
+Prequisite Instructions
+=======================
+
+Most of the build scripts use the custom GCC.  Build gcc first before running any of the other build-xxxx.sh scripts.
 
 1.  Install Centos 5.10 - Install yourself, or use the packer and vagrant files
 
 2.  Build GCC 4.8.2 (This step can take as long as 3 hours) - Do this before you go to bed or something :)
 
-        /vagrant/build_gcc.sh
+        cd /vagrant
+        sudo ./build_gcc.sh
 
-3.  Build Python
+Building Software
+=================
 
-        /vagrant/build_python.sh
+* Version Numbers and Download URLs may break over time, they are stored in global-config.sh or in the build scripts themselves.
+
+* All software will install to /opt by default
+
+Run any of the other build scripts (example with python)
+
+    cd /vagrant
+    sudo ./build-python.sh
+
+
         
-Activate Environment
-====================
+Activating Python Environment
+=============================
 
 Activate
 
