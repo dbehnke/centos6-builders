@@ -230,6 +230,11 @@ download ${PYTHON3_URL} ${PYTHON3_FILE}
 download ${PYTHON2_URL} ${PYTHON2_FILE}
 download ${SETUPTOOLS_URL} ${SETUPTOOLS_FILE}
 
+#clear out any currently installed python
+#installations of same version
+rm -r -f ${PYTHON2_PREFIX}
+rm -r -f ${PYTHON3_PREFIX}
+
 #build dependencies for each python
 build_dependencies ${PYTHON2_TEMPDIR} ${PYTHON2_PREFIX}
 build_dependencies ${PYTHON3_TEMPDIR} ${PYTHON3_PREFIX}
@@ -240,9 +245,11 @@ build_python2 ${PYTHON2_TEMPDIR} ${PYTHON2_PREFIX}
 #build python3
 build_python3 ${PYTHON3_TEMPDIR} ${PYTHON3_PREFIX}
 
-cp ${HOSTDIR}/activate-python2.sh /opt/activate-python-${PYTHON2_VERSION}.sh
-cp ${HOSTDIR}/activate-python3.sh /opt/activate-python-${PYTHON3_VERSION}.sh
-chmod +x /opt/activate*.sh
+echo ${HOSTDIR}
+echo ${PYTHON2_PREFIX}
+echo ${PYTHON3_PREFIX}
+cp ${HOSTDIR}/activate-python ${PYTHON2_PREFIX}
+cp ${HOSTDIR}/activate-python ${PYTHON3_PREFIX}
 
 #package python2
 package python-${PYTHON2_VERSION}

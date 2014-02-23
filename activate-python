@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#helper script to activate the python environment
+#this script will be copied into the built python
+#it should be activated with source /path/to/pythoninstall/activate-python
+
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+unset ACTIVATE_PYTHON_SAVED_LD_LIBRARY_PATH
+unset ACTIVATE_PYTHON_SAVED_PATH
+export ACTIVATE_PYTHON_SAVED_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+export ACTIVATE_PYTHON_SAVED_PATH=${PATH}
+export LD_LIBRARY_PATH=${SCRIPTDIR}/lib:${LD_LIBRARY_PATH}
+export PATH=${SCRIPTDIR}/bin:${PATH}
+export ACTIVATE_PYTHON_SAVED_PS1=$PS1
+export PS1="(Python using ${SCRIPTDIR})\n${PS1}"
+
+deactivate-python() {
+  #this function will deactivate the sourced script
+  export LD_LIBRARY_PATH=${ACTIVATE_PYTHON_SAVED_LD_LIBRARY_PATH}
+  export PATH=${ACTIVATE_PYTHON_SAVED_PATH}
+  export PS1=${ACTIVATE_PYTHON_SAVED_PS1}
+  unset ACTIVATE_PYTHON_SAVED_LD_LIBRARY_PATH
+  unset ACTIVATE_PYTHON_SAVED_PATH
+  unset ACTIVATE_PYTHON_SAVED_PS1
+  unset -f deactivate-python
+}
+echo "deactivate the python environment with the command deactivate-python"
