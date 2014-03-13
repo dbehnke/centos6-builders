@@ -23,7 +23,7 @@ CMAKE_URL=http://www.cmake.org/files/v2.8/${CMAKE_FILE}
 CMAKE_PREFIX=${INSTPREFIX}/cmake-${CMAKE_VERSION}
 
 #nginx
-NGINX_VERSION=1.4.5
+NGINX_VERSION=1.4.6
 NGINX_FILE=nginx-${NGINX_VERSION}.tar.gz
 NGINX_URL=http://nginx.org/download/${NGINX_FILE}
 NGINX_PREFIX=${INSTPREFIX}/nginx-${NGINX_VERSION}
