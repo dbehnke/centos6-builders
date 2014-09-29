@@ -7,7 +7,7 @@ INSTPREFIX=/opt
 TEMPDIR=/tmp
 
 #GCC
-GCC_VERSION=4.8.2
+GCC_VERSION=4.8.3
 GCC_PREFIX=/opt/gcc-${GCC_VERSION}
 GLIBC_VERSION=`ldd --version | grep "ldd" | awk '{ print $4 }'`
 
@@ -17,56 +17,56 @@ BZIP_FILE=bzip2-${BZIP_VERSION}.tar.gz
 BZIP_URL=http://www.bzip.org/${BZIP_VERSION}/${BZIP_FILE}
 
 #Cmake
-CMAKE_VERSION=2.8.12.2
+CMAKE_VERSION=3.0.2
 CMAKE_FILE=cmake-${CMAKE_VERSION}.tar.gz
-CMAKE_URL=http://www.cmake.org/files/v2.8/${CMAKE_FILE}
+CMAKE_URL=http://www.cmake.org/files/v3.0/${CMAKE_FILE}
 CMAKE_PREFIX=${INSTPREFIX}/cmake-${CMAKE_VERSION}
 
 #nginx
-NGINX_VERSION=1.4.6
+NGINX_VERSION=1.6.2
 NGINX_FILE=nginx-${NGINX_VERSION}.tar.gz
 NGINX_URL=http://nginx.org/download/${NGINX_FILE}
 NGINX_PREFIX=${INSTPREFIX}/nginx-${NGINX_VERSION}
 
 #OpenSSL
-OPENSSL_VERSION=1.0.1f
+OPENSSL_VERSION=1.0.1i
 OPENSSL_FILE=openssl-${OPENSSL_VERSION}.tar.gz
 OPENSSL_URL=https://www.openssl.org/source/${OPENSSL_FILE}
 
 #PCRE
-PCRE_VERSION=8.34
+PCRE_VERSION=8.36
 PCRE_FILE=pcre-${PCRE_VERSION}.tar.bz2
 PCRE_URL=ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${PCRE_FILE}
 
 #python 2
-PYTHON2_VERSION=2.7.6
+PYTHON2_VERSION=2.7.8
 PYTHON2_FILE=Python-${PYTHON2_VERSION}.tgz
 PYTHON2_URL=http://python.org/ftp/python/${PYTHON2_VERSION}/${PYTHON2_FILE}
 PYTHON2_PREFIX=/opt/python-${PYTHON2_VERSION}
 
 #python 3
-PYTHON3_VERSION=3.3.4
+PYTHON3_VERSION=3.4.1
 PYTHON3_FILE=Python-${PYTHON3_VERSION}.tgz
 PYTHON3_URL=http://python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz
 PYTHON3_PREFIX=/opt/python-${PYTHON3_VERSION}
 
 #readline
-READLINE_VERSION=6.2
+READLINE_VERSION=6.3
 READLINE_FILE=readline-${READLINE_VERSION}.tar.gz
 READLINE_URL=http://ftp.gnu.org/gnu/readline/${READLINE_FILE}
 
 #setuptools (for python)
-SETUPTOOLS_VERSION=2.2
+SETUPTOOLS_VERSION=6.0.1
 SETUPTOOLS_FILE=setuptools-${SETUPTOOLS_VERSION}.tar.gz
 SETUPTOOLS_URL=https://pypi.python.org/packages/source/s/setuptools/${SETUPTOOLS_FILE}
 
 #sqlite (for python)
-SQLITE_VERSION=3080301
+SQLITE_VERSION=3080600
 SQLITE_FILE=sqlite-autoconf-${SQLITE_VERSION}.tar.gz
 SQLITE_URL=https://sqlite.org/2014/${SQLITE_FILE}
 
 #lzma
-XZ_VERSION=5.0.5
+XZ_VERSION=5.0.7
 XZ_FILE=xz-${XZ_VERSION}.tar.gz
 XZ_URL=http://tukaani.org/xz/${XZ_FILE}
 

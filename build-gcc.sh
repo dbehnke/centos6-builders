@@ -15,12 +15,12 @@ fi
 HOSTDIR=/vagrant
 
 #Define File Versions and Download URLs
-GCC_VERSION=4.8.2
+GCC_VERSION=4.8.3
 GCC_FILENAME=gcc-${GCC_VERSION}.tar.bz2
 GCC_URL=http://www.netgull.com/gcc/releases/gcc-${GCC_VERSION}/${GCC_FILENAME}
 #GCC_URL=http://mirrors.ispros.com.bd/gnu/gcc/gcc-${GCC_VERSION}/${GCC_FILENAME}
 
-MPC_VERSION=1.0.1
+MPC_VERSION=1.0.2
 MPC_FILENAME=mpc-${MPC_VERSION}.tar.gz
 MPC_URL=http://www.multiprecision.org/mpc/download/${MPC_FILENAME}
 
@@ -28,15 +28,15 @@ MPFR_VERSION=3.1.2
 MPFR_FILENAME=mpfr-${MPFR_VERSION}.tar.bz2
 MPFR_URL=http://www.mpfr.org/mpfr-current/${MPFR_FILENAME}
 
-GMP_VERSION=5.1.3
+GMP_VERSION=6.0.0a
 GMP_FILENAME=gmp-${GMP_VERSION}.tar.bz2
 GMP_URL=https://gmplib.org/download/gmp/${GMP_FILENAME}
 
-ISL_VERSION=0.11.1
+ISL_VERSION=0.12.2
 ISL_FILENAME=isl-${ISL_VERSION}.tar.bz2
 ISL_URL=ftp://ftp.irisa.fr/pub/mirrors/gcc.gnu.org/gcc/infrastructure/${ISL_FILENAME}
 
-CLOOG_VERSION=0.18.0
+CLOOG_VERSION=0.18.1
 CLOOG_FILENAME=cloog-${CLOOG_VERSION}.tar.gz
 CLOOG_URL=ftp://ftp.irisa.fr/pub/mirrors/gcc.gnu.org/gcc/infrastructure/${CLOOG_FILENAME}
 
@@ -54,11 +54,11 @@ rm -r -f $TEMPDIR
 mkdir $TEMPDIR
 
 #prerequisites
-yum -y groupinstall "Development tools"
+##yum -y groupinstall "Development tools"
 
 #32 bit library support
 #centos 6 - yum -y install glibc-devel.i686 glibc-i686
-yum -y install glibc-devel.i386 glibc.i686
+##yum -y install glibc-devel.i386 glibc.i686
 
 download() {
   #parameters: $1 = url to download, $2 = filename
