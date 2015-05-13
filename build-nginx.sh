@@ -14,7 +14,7 @@ setcc
 
 # Make sure custom gcc was built
 if [ ! -f ${CC} ]; then
-  echo "gcc 4.8.2 needs to be built/installed"
+  echo "gcc 4.9.2 needs to be built/installed"
   exit 1
 fi
 
