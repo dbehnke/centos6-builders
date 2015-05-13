@@ -15,12 +15,12 @@ fi
 HOSTDIR=/vagrant
 
 #Define File Versions and Download URLs
-GCC_VERSION=4.8.3
+GCC_VERSION=4.9.2
 GCC_FILENAME=gcc-${GCC_VERSION}.tar.bz2
 GCC_URL=http://www.netgull.com/gcc/releases/gcc-${GCC_VERSION}/${GCC_FILENAME}
 #GCC_URL=http://mirrors.ispros.com.bd/gnu/gcc/gcc-${GCC_VERSION}/${GCC_FILENAME}
 
-MPC_VERSION=1.0.2
+MPC_VERSION=1.0.3
 MPC_FILENAME=mpc-${MPC_VERSION}.tar.gz
 MPC_URL=http://www.multiprecision.org/mpc/download/${MPC_FILENAME}
 
@@ -28,8 +28,8 @@ MPFR_VERSION=3.1.2
 MPFR_FILENAME=mpfr-${MPFR_VERSION}.tar.bz2
 MPFR_URL=http://www.mpfr.org/mpfr-current/${MPFR_FILENAME}
 
-GMP_VERSION=6.0.0a
-GMP_FILENAME=gmp-${GMP_VERSION}.tar.bz2
+GMP_VERSION=6.0.0
+GMP_FILENAME=gmp-${GMP_VERSION}a.tar.bz2
 GMP_URL=https://gmplib.org/download/gmp/${GMP_FILENAME}
 
 ISL_VERSION=0.12.2
@@ -128,7 +128,7 @@ mv cloog-${CLOOG_VERSION} cloog
 
 #configure gcc
 pwd
-./configure --prefix=${IPATH}
+./configure --prefix=${IPATH} --disable-multilib --enable-languages=c,c++
 make
 if [ $? -ne 0 ]; then
   echo "failed make"
