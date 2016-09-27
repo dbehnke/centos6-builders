@@ -51,7 +51,7 @@ build_dependencies() {
 
   cd ${TEMPDIR}
   extract_gzip ${HOSTDIR}/${OPENSSL_FILE}
-  extract_gzip ${HOSTDIR}/${ZLIB_FILE} 
+  extract_gzip ${HOSTDIR}/${ZLIB_FILE}
   extract_gzip ${HOSTDIR}/${READLINE_FILE}
   extract_gzip ${HOSTDIR}/${BZIP_FILE}
   extract_gzip ${HOSTDIR}/${XZ_FILE}
@@ -82,7 +82,7 @@ build_dependencies() {
   make install
 
   #Download and Build readline
-  cd ${TEMPDIR} 
+  cd ${TEMPDIR}
   cd readline-${READLINE_VERSION}/
   ./configure --prefix=$IPATH
   make
@@ -136,7 +136,7 @@ install_setuptools() {
   IPATH=$2
 
   SAVED_PATH=${PATH}
-  export PATH=${IPATH}/bin:${PATH} 
+  export PATH=${IPATH}/bin:${PATH}
   #install setuptools, pip, virtualenv
   cd ${TEMPDIR}
   cd setuptools-${SETUPTOOLS_VERSION}
@@ -158,15 +158,15 @@ build_python2() {
   cd ${TEMPDIR}
   extract_gzip ${HOSTDIR}/${PYTHON2_FILE}
   cd Python-${PYTHON2_VERSION}
-  
+
   ./configure --enable-shared --prefix=${IPATH}
-  
+
   make
   if [ $? -ne 0 ]; then
     echo "failed make for build_python2"
     exit 1
   fi
-  
+
   make install
   if [ $? -ne 0 ]; then
     echo "make install failed for build_python2"
@@ -186,32 +186,32 @@ build_python3() {
   IPATH=$2
   SAVED_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
   export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${IPATH}/lib
-  
+
   cd ${TEMPDIR}
   extract_gzip ${HOSTDIR}/${PYTHON3_FILE}
   cd Python-${PYTHON3_VERSION}
-  
+
   ./configure --enable-shared --prefix=${IPATH}
-  
+
   make
   if [ $? -ne 0 ]; then
     echo "failed make for build_python3"
     exit 1
   fi
-  
+
   make install
   if [ $? -ne 0 ]; then
     echo "make install failed for build_python3"
     exit 1
   fi
-  
+
   #symbolic link python3 to python
   cd ${IPATH}/bin
   ln -s python3 python
 
   #install setuptools
   #install_setuptools ${TEMPDIR} ${IPATH}
-  
+
   #restore LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=${SAVED_LD_LIBRARY_PATH}
 }
@@ -252,7 +252,17 @@ echo ${PYTHON3_PREFIX}
 cp ${HOSTDIR}/activate-python ${PYTHON2_PREFIX}
 cp ${HOSTDIR}/activate-python ${PYTHON3_PREFIX}
 
+ln -s ${PYTHON2_PREFIX} ${INSTPREFIX}/python2
+#install pip
+source ${INSTPREFIX}/python2/activate-python
+wget https://bootstrap.pypa.io/get-pip.py
+#get supervisor as well
+python ./get-pip.py && pip install supervisor
+deactivate-python
+
+ln -s ${PYTHON3_PREFIX} ${INSTPREFIX}/python3
+
 #package python2
-package python-${PYTHON2_VERSION}
+##package python-${PYTHON2_VERSION}
 #package python3
-package python-${PYTHON3_VERSION}
+##package python-${PYTHON3_VERSION}
