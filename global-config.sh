@@ -3,7 +3,11 @@
 #Global Config
 
 HOSTDIR=/vagrant
-INSTPREFIX=/exports/mydesktop/opt
+#INSTPREFIX=/exports/mydesktop/opt
+if [ "$INSTPREFIX" == "" ]; then
+  INSTPREFIX=/usr/local/dbehnke
+fi
+
 TEMPDIR=/tmp
 
 #GCC
@@ -122,7 +126,7 @@ package() {
   PACKAGE_TIMESTAMP=`date +%Y%m%d`
   PACKAGE_ARCH=`uname -m`
   BINDIR=$1
-  
+
   #PACKAGE_ARCHIVE=${HOSTDIR}/${BINDIR}-gcc-${GCC_VERSION}-glibc-${GLIBC_VERSION}-${PACKAGE_ARCH}-${PACKAGE_TIMESTAMP}.tar.gz
   PACKAGE_ARCHIVE=${HOSTDIR}/${BINDIR}-glibc-${GLIBC_VERSION}-${PACKAGE_ARCH}-${PACKAGE_TIMESTAMP}.tar.gz
   cd ${INSTPREFIX}
