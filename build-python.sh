@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Builds Python2 and Python3 for CentOS 5x
+#Builds Python2 and Python3 for CentOS 6x
 
 #make sure we running as root
 # Make sure only root can run our script
@@ -13,10 +13,10 @@ source `dirname $0`/global-config.sh
 setcc
 
 # Make sure custom gcc was built
-if [ ! -f ${CC} ]; then
-  echo "gcc ${GCC_VERSION} needs to be built/installed"
-  exit 1
-fi
+#if [ ! -f ${CC} ]; then
+#  echo "gcc ${GCC_VERSION} needs to be built/installed"
+#  exit 1
+#fi
 
 #Directories to build the source
 PYTHON2_TEMPDIR=/tmp/build-python-${PYTHON2_VERSION}
@@ -29,7 +29,7 @@ PYTHON3_TEMPDIR=/tmp/build-python3-${PYTHON3_VERSION}
 #export CC=/usr/bin/gcc44
 
 #Set LD_LIBRARY_PATH to local lib directory
-export LD_LIBRARY_PATH=${GCC_PREFIX}/lib
+#export LD_LIBRARY_PATH=${GCC_PREFIX}/lib
 
 cleartemp() {
   rm -r -f ${PYTHON2_TEMPDIR}
@@ -56,7 +56,7 @@ build_dependencies() {
   extract_gzip ${HOSTDIR}/${BZIP_FILE}
   extract_gzip ${HOSTDIR}/${XZ_FILE}
   extract_gzip ${HOSTDIR}/${SQLITE_FILE}
-  extract_gzip ${HOSTDIR}/${SETUPTOOLS_FILE}
+  #extract_gzip ${HOSTDIR}/${SETUPTOOLS_FILE}
 
   #Build OpenSSL
   cd ${TEMPDIR}
@@ -129,6 +129,7 @@ build_dependencies() {
 }
 
 install_setuptools() {
+  return
   #$1 = tempdir, $2=path where python is installed
   #assumes that setuptools was extracted in tempdir
   TEMPDIR=$1
@@ -173,14 +174,14 @@ build_python2() {
   fi
 
 
-  install_setuptools ${TEMPDIR} ${IPATH}
+  #install_setuptools ${TEMPDIR} ${IPATH}
 
   #restore LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=${SAVED_LD_LIBRARY_PATH}
 }
 
 build_python3() {
-  #$1 = tempdir, $2=install prefix
+  $1 = tempdir, $2=install prefix
   TEMPDIR=$1
   IPATH=$2
   SAVED_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
@@ -209,7 +210,7 @@ build_python3() {
   ln -s python3 python
 
   #install setuptools
-  install_setuptools ${TEMPDIR} ${IPATH}
+  #install_setuptools ${TEMPDIR} ${IPATH}
   
   #restore LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=${SAVED_LD_LIBRARY_PATH}
@@ -228,7 +229,7 @@ download ${XZ_URL} ${XZ_FILE}
 download ${SQLITE_URL} ${SQLITE_FILE}
 download ${PYTHON3_URL} ${PYTHON3_FILE}
 download ${PYTHON2_URL} ${PYTHON2_FILE}
-download ${SETUPTOOLS_URL} ${SETUPTOOLS_FILE}
+#download ${SETUPTOOLS_URL} ${SETUPTOOLS_FILE}
 
 #clear out any currently installed python
 #installations of same version
