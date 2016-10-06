@@ -12,5 +12,5 @@ docker run --name ${run_name} \
   -v $PWD:/vagrant ${image_name} /vagrant/dockerbuild.sh
 
 #clean everything up
-#docker rm ${run_name}
-#docker rmi ${image_name}
+docker rm ${run_name}
+docker rmi ${image_name}

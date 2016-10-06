@@ -14,7 +14,7 @@ scl enable devtoolset-4 ./build-python.sh && \
 
 #mydesktop build
 cd /vagrant
-export INSTPREFIX=/usr/local/dbehnke
+export INSTPREFIX=/exports/mydesktop/opt
 scl enable devtoolset-4 ./build-nginx.sh && \
 scl enable devtoolset-4 ./build-python.sh && \
   cd output && tar cvfz mydesktop-python-linux-${tstamp}.tar.gz ${INSTPREFIX}
